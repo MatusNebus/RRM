@@ -22,12 +22,21 @@ public:
         publisher_ = this->create_publisher<rrm_msgs::msg::Command>("move_command", 10);
 
         RCLCPP_INFO(this->get_logger(), "Teleop node initialized.");
-        RCLCPP_INFO(this->get_logger(), "Enter: joint_id position (e.g. 2 1.0)");
+        RCLCPP_INFO(this->get_logger(), "Enter: joint_id position");
     }
 
     // Function that publishes command to robot
     void move(int joint_id, double position)
     {
+        // Validate joint_id (only 0, 1, 2 allowed)
+        if (joint_id != 0 && joint_id != 1 && joint_id != 2)
+        {
+            RCLCPP_ERROR(this->get_logger(),
+                         "Invalid joint_id: %d (allowed: 0, 1, 2)",
+                         joint_id);
+            return;
+        }
+
         // Create message of type rrm_msgs/msg/Command
         rrm_msgs::msg::Command msg;
         msg.joint_id = joint_id;
@@ -46,9 +55,8 @@ private:
     rclcpp::Publisher<rrm_msgs::msg::Command>::SharedPtr publisher_;
 };
 
-// =======================================================
-// MAIN FUNCTION
-// =======================================================
+
+// MAIN
 int main(int argc, char ** argv)
 {
     // Initialize ROS2
