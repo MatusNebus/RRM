@@ -20,6 +20,7 @@ ament_target_dependencies(
   teleop_node
   "rclcpp"
   "rrm_msgs"
+  "sensor_msgs"
 )
 
 add_executable(logger_node src/logger_node.cpp)
