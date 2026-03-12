@@ -91,11 +91,13 @@ public:
 
     auto future = client_->async_send_request(request);
 
-    //pockaj na response (timeout 5s)
+    auto timeout = std::chrono::duration_cast<std::chrono::milliseconds>(
+      std::chrono::duration<double>(T + 2.0));
+
     auto ret = rclcpp::spin_until_future_complete(
       this->get_node_base_interface(),
       future,
-      5s);
+      timeout);
 
     if (ret != rclcpp::FutureReturnCode::SUCCESS) {
       RCLCPP_ERROR(this->get_logger(), "Service call failed (timeout or error).");
