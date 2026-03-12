@@ -11,7 +11,6 @@ find_package(rclcpp REQUIRED)
 find_package(rrm_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
-find_package(ament_index_cpp REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
@@ -52,8 +51,8 @@ ament_target_dependencies(
   "rclcpp"
   "sensor_msgs"
   "std_srvs"
-  "ament_index_cpp"
 )
+target_compile_definitions(teach_point_server_node PRIVATE PACKAGE_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
 
 add_executable(teach_point_client_node src/teach_point_client_node.cpp)
 target_include_directories(teach_point_client_node PUBLIC
@@ -75,8 +74,8 @@ ament_target_dependencies(
   "rclcpp"
   "rrm_msgs"
   "sensor_msgs"
-  "ament_index_cpp"
 )
+target_compile_definitions(play_trajectory_server_node PRIVATE PACKAGE_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
 
 add_executable(play_trajectory_client_node src/play_trajectory_client_node.cpp)
 target_include_directories(play_trajectory_client_node PUBLIC

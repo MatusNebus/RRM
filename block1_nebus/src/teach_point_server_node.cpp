@@ -2,7 +2,6 @@
 #include "sensor_msgs/msg/joint_state.hpp"
 #include "block1_nebus/srv/save_point.hpp"
 #include "block1_nebus/point_file_writer.hpp"
-#include "ament_index_cpp/get_package_share_directory.hpp"
 #include "std_srvs/srv/trigger.hpp"
 
 #include <fstream>
@@ -18,7 +17,7 @@ public:
     current_positions_{0.0, 0.0, 0.0},
     have_joint_state_(false),
     point_id_(1),
-    file_path_(ament_index_cpp::get_package_share_directory("block1_nebus") + std::string("/teach_points.txt")),
+  file_path_(std::string(PACKAGE_SOURCE_DIR) + std::string("/teach_points.txt")),
     file_writer_(file_path_)
   {
     joint_sub_ = this->create_subscription<sensor_msgs::msg::JointState>(

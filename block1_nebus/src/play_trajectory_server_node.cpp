@@ -2,7 +2,6 @@
 #include "sensor_msgs/msg/joint_state.hpp"
 #include "rrm_msgs/srv/command.hpp"
 #include "block1_nebus/srv/play_trajectory.hpp"
-#include "ament_index_cpp/get_package_share_directory.hpp"
 
 #include <algorithm>
 #include <chrono>
@@ -31,7 +30,7 @@ public:
   : Node("play_trajectory_server_node"),
     current_positions_{0.0, 0.0, 0.0},
     have_joint_state_(false),
-    file_path_(ament_index_cpp::get_package_share_directory("block1_nebus") + std::string("/teach_points.txt"))
+  file_path_(std::string(PACKAGE_SOURCE_DIR) + std::string("/teach_points.txt"))
   {
     service_group_ = this->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
     comm_group_ = this->create_callback_group(rclcpp::CallbackGroupType::Reentrant);
