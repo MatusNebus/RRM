@@ -1,0 +1,307 @@
+<?xml version="1.0"?>
+<robot name="arm">
+
+  <!-- ========================= -->
+  <!-- LINKS -->
+  <!-- ========================= -->    
+  
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <cylinder length="0.01" radius="0.05"/>
+      </geometry>
+      <material name="white">
+        <color rgba="1 1 1 1"/>
+      </material>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </visual>
+  </link>
+
+  <!-- uzol J1 -->
+  <link name="link_1">
+    <visual>
+      <geometry>
+        <sphere radius="0.03"/>
+      </geometry>
+      <material name="joint_gray_1">
+        <color rgba="0.2 0.2 0.2 1"/>
+      </material>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </visual>
+  </link>
+
+  <!-- clanok l1 = 0 -->
+  <link name="link_1_2">
+    <visual>
+      <geometry>
+        <cylinder length="0.001" radius="0.01"/>
+      </geometry>
+      <material name="oranzova">
+        <color rgba="0.82 0.365 0 1"/>
+      </material>
+      <origin xyz="0 0 0.0005" rpy="0 0 0"/>
+    </visual>
+  </link>
+
+  <!-- uzol J2 -->
+  <link name="link_2_joint">
+    <visual>
+      <geometry>
+        <sphere radius="0.03"/>
+      </geometry>
+      <material name="joint_gray_2">
+        <color rgba="0.2 0.2 0.2 1"/>
+      </material>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </visual>
+  </link>
+
+  <!-- clanok l2 = 0.203 -->
+  <link name="link_2">
+    <visual>
+      <geometry>
+        <cylinder length="0.203" radius="0.01"/>
+      </geometry>
+      <material name="oranzova">
+        <color rgba="0.82 0.365 0 1"/>
+      </material>
+      <origin xyz="0 0 0.1015" rpy="0 0 0"/>
+    </visual>
+  </link>
+
+  <!-- uzol J3 -->
+  <link name="link_3_joint">
+    <visual>
+      <geometry>
+        <sphere radius="0.03"/>
+      </geometry>
+      <material name="joint_gray_3">
+        <color rgba="0.2 0.2 0.2 1"/>
+      </material>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </visual>
+  </link>
+
+  <!-- clanok l3 = 0.203 -->
+  <link name="link_3">
+    <visual>
+      <geometry>
+        <cylinder length="0.203" radius="0.01"/>
+      </geometry>
+      <material name="oranzova">
+        <color rgba="0.82 0.365 0 1"/>
+      </material>
+      <origin xyz="0 0 0.1015" rpy="0 0 0"/>
+    </visual>
+  </link>
+
+  <!-- uzol J4 -->
+  <link name="link_4_joint">
+    <visual>
+      <geometry>
+        <sphere radius="0.03"/>
+      </geometry>
+      <material name="joint_gray_4">
+        <color rgba="0.2 0.2 0.2 1"/>
+      </material>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </visual>
+  </link>
+
+  <!-- clanok l4 = 0.05 -->
+  <link name="link_4">
+    <visual>
+      <geometry>
+        <cylinder length="0.05" radius="0.01"/>
+      </geometry>
+      <material name="oranzova">
+        <color rgba="0.82 0.365 0 1"/>
+      </material>
+      <origin xyz="0 0 0.025" rpy="0 0 0"/>
+    </visual>
+  </link>
+
+  <!-- uzol J5 -->
+  <link name="link_5_joint">
+    <visual>
+      <geometry>
+        <sphere radius="0.03"/>
+      </geometry>
+      <material name="joint_gray_5">
+        <color rgba="0.2 0.2 0.2 1"/>
+      </material>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </visual>
+  </link>
+
+  <!-- clanok l5 = 0.15 -->
+  <link name="link_5">
+    <visual>
+      <geometry>
+        <cylinder length="0.15" radius="0.01"/>
+      </geometry>
+      <material name="oranzova">
+        <color rgba="0.82 0.365 0 1"/>
+      </material>
+      <origin xyz="0 0 0.075" rpy="0 0 0"/>
+    </visual>
+
+    <!-- tenka pevna vodiaca os len ako vizual -->
+    <visual>
+      <geometry>
+        <cylinder length="0.10" radius="0.004"/>
+      </geometry>
+      <material name="guide_gray">
+        <color rgba="0.4 0.4 0.4 1"/>
+      </material>
+      <origin xyz="0 0 0.20" rpy="0 0 0"/>
+    </visual>
+  </link>
+
+  <!-- uzol J6 -->
+  <link name="link_6_joint">
+    <visual>
+      <geometry>
+        <sphere radius="0.02"/>
+      </geometry>
+      <material name="joint_blue_6">
+        <color rgba="0.1 0.1 0.8 1"/>
+      </material>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </visual>
+  </link>
+
+  <!-- clanok l6 = 0 -->
+  <link name="link_6">
+    <visual>
+      <geometry>
+        <cylinder length="0.001" radius="0.008"/>
+      </geometry>
+      <material name="link_zero_6">
+        <color rgba="0.8 0.8 0.8 1"/>
+      </material>
+      <origin xyz="0 0 0.0005" rpy="0 0 0"/>
+    </visual>
+  </link>
+
+  <!-- koncovy bod tool0 -->
+  <link name="tool0">
+    <visual>
+      <geometry>
+        <sphere radius="0.02"/>
+      </geometry>
+      <material name="tool_black">
+        <color rgba="0 0 0 1"/>
+      </material>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </visual>
+  </link>
+
+  <!-- ========================= -->
+  <!-- JOINTS -->
+  <!-- ========================= -->
+
+  <!-- J1 base_link -> link_1 -->
+  <joint name="joint_1" type="revolute">
+    <axis xyz="0 0 1"/>
+    <parent link="base_link"/>
+    <child link="link_1"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <limit effort="1000.0" lower="-1.62" upper="1.62" velocity="0.5"/>
+  </joint>
+
+  <!-- l1 = 0 link_1 -> link_1_2 -->
+  <joint name="joint_l1_fixed" type="fixed">
+    <parent link="link_1"/>
+    <child link="link_1_2"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- J2 link_1_2 -> link_2_joint -->
+  <joint name="joint_2" type="revolute">
+    <axis xyz="0 1 0"/>
+    <parent link="link_1_2"/>
+    <child link="link_2_joint"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <limit effort="1000.0" lower="-0.96" upper="2.182" velocity="0.5"/>
+  </joint>
+
+  <!-- l2 = 0.203 link_2_joint -> link_2 -->
+  <joint name="joint_l2_fixed" type="fixed">
+    <parent link="link_2_joint"/>
+    <child link="link_2"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- J3 link_2 -> link_3_joint -->
+  <joint name="joint_3" type="revolute">
+    <axis xyz="0 1 0"/>
+    <parent link="link_2"/>
+    <child link="link_3_joint"/>
+    <origin xyz="0 0 0.203" rpy="0 0 0"/>
+    <limit effort="1000.0" lower="-0.96" upper="2.182" velocity="0.5"/>
+  </joint>
+
+  <!-- l3 = 0.203 link_3_joint -> link_3 -->
+  <joint name="joint_l3_fixed" type="fixed">
+    <parent link="link_3_joint"/>
+    <child link="link_3"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- J4 link_3 -> link_4_joint -->
+  <joint name="joint_4" type="revolute">
+    <axis xyz="0 0 1"/>
+    <parent link="link_3"/>
+    <child link="link_4_joint"/>
+    <origin xyz="0 0 0.203" rpy="0 0 0"/>
+    <limit effort="1000.0" lower="-3.14" upper="3.14" velocity="0.5"/>
+  </joint>
+
+  <!-- l4 = 0.05 link_4_joint -> link_4 -->
+  <joint name="joint_l4_fixed" type="fixed">
+    <parent link="link_4_joint"/>
+    <child link="link_4"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- J5 link_4 -> link_5_joint -->
+  <joint name="joint_5" type="revolute">
+    <axis xyz="0 1 0"/>
+    <parent link="link_4"/>
+    <child link="link_5_joint"/>
+    <origin xyz="0 0 0.05" rpy="0 0 0"/>
+    <limit effort="1000.0" lower="-2.2" upper="2.2" velocity="0.5"/>
+  </joint>
+
+  <!-- l5 = 0.15 link_5_joint -> link_5 -->
+  <joint name="joint_l5_fixed" type="fixed">
+    <parent link="link_5_joint"/>
+    <child link="link_5"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- J6 prismaticky, link_5 -> link_6_joint -->
+  <joint name="joint_6" type="prismatic">
+    <axis xyz="0 0 1"/>
+    <parent link="link_5"/>
+    <child link="link_6_joint"/>
+    <origin xyz="0 0 0.15" rpy="0 0 0"/>
+    <limit effort="1000.0" lower="0.0" upper="0.1" velocity="0.2"/>
+  </joint>
+
+  <!-- l6 = 0 link_6_joint -> link_6 -->
+  <joint name="joint_l6_fixed" type="fixed">
+    <parent link="link_6_joint"/>
+    <child link="link_6"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- tool0 na konci link_6 -->
+  <joint name="joint_6_tool0" type="fixed">
+    <parent link="link_6"/>
+    <child link="tool0"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+</robot>

@@ -1,0 +1,22 @@
+# Unified ignore rules for the whole RRM repository
+
+# VS Code workspace settings
+.vscode/
+**/.vscode/
+
+# ROS 2 / colcon build artifacts
+build/
+install/
+log/
+**/build/
+**/install/
+**/log/
+
+# Python cache files
+__pycache__/
+**/__pycache__/
+*.pyc
+
+# Common local files
+*.env
+.DS_Store
