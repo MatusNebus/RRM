@@ -2,6 +2,7 @@
 #include <functional>
 #include <memory>
 #include <string>
+#include <vector>
 
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
@@ -21,9 +22,12 @@ class RobotSimNode : public rclcpp::Node
     RobotSimNode()
     :
     Node("robot_sim"),
-    joint_names_({"joint_1", "joint_2", "joint_3", "joint_4", "joint_5", "joint_6"}),
+        joint_names_(makeJointNames(resolveJointCount())),
     robot_({0.05, 1.0}, joint_names_.size())
     {
+                RCLCPP_INFO(this->get_logger(), "Configured robot with %zu active joints (%s)",
+                                        joint_names_.size(), this->get_parameter("robot_name").as_string().c_str());
+
         publisher_ = this->create_publisher<sensor_msgs::msg::JointState>("joint_states", 10);
 
         thread_ = std::thread([this](){
@@ -53,6 +57,34 @@ class RobotSimNode : public rclcpp::Node
     }
 
   private:
+    int resolveJointCount()
+    {
+        this->declare_parameter<std::string>("robot_name", "advancedArm");
+        this->declare_parameter<int>("active_joint_count", 0);
+
+        const auto robot_name = this->get_parameter("robot_name").as_string();
+        const int configured = this->get_parameter("active_joint_count").as_int();
+        if (configured > 0) {
+            return configured;
+        }
+
+        if (robot_name == "simpleArm") {
+            return 3;
+        }
+
+        return 6;
+    }
+
+    static std::vector<std::string> makeJointNames(int count)
+    {
+        std::vector<std::string> names;
+        names.reserve(static_cast<size_t>(count));
+        for (int i = 1; i <= count; ++i) {
+            names.push_back("joint_" + std::to_string(i));
+        }
+        return names;
+    }
+
     std::thread thread_;
     std::vector<std::string> joint_names_;
     rrm_sim::MotorsChain robot_;
@@ -63,21 +95,31 @@ class RobotSimNode : public rclcpp::Node
     void cmd_service_callback(const std::shared_ptr<rrm_msgs::srv::Command::Request> request,
              std::shared_ptr<rrm_msgs::srv::Command::Response>      response)
     {
-        if (request->positions.size() != joint_names_.size()) {
+        std::vector<double> target_positions;
+        std::vector<double> target_velocities;
+
+        if (request->positions.size() == joint_names_.size() &&
+            request->velocities.size() == joint_names_.size()) {
+            target_positions = request->positions;
+            target_velocities = request->velocities;
+        } else if (request->positions.size() == 3 && request->velocities.size() == 3 &&
+                   joint_names_.size() >= 3) {
+            target_positions = robot_.getCurrentPosition();
+            target_velocities.assign(joint_names_.size(), 0.1);
+            for (size_t i = 0; i < 3; ++i) {
+                target_positions[i] = request->positions[i];
+                target_velocities[i] = request->velocities[i];
+            }
+        } else {
             response->result_code = 1;
-            response->message = "Received an incorrect size of desired positions. Command will be skipped";
-            RCLCPP_ERROR(this->get_logger(), response->message.c_str());
-            return;
-        }
-        if (request->velocities.size() != joint_names_.size()) {
-            response->result_code = 1;
-            response->message = "Received an incorrect size of desired velocities. Command will be skipped";
+            response->message =
+                "Invalid command vector sizes. Expected either full joint size or first 3 joints.";
             RCLCPP_ERROR(this->get_logger(), response->message.c_str());
             return;
         }
 
         try {
-            robot_.move(request->positions, request->velocities);
+            robot_.move(target_positions, target_velocities);
             RCLCPP_INFO(this->get_logger(), "Execution done");
             response->result_code = 0;
             response->message = "Execution done";

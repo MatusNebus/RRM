@@ -1,48 +1,103 @@
 # block1_nebus
 
-Balík pre riadenie robotického ramena. Umožňuje učenie polohy, prehrávanie trajektórii a diaľkové ovládanie.
+Balík pre učenie bodov, prehrávanie trajektórie a manuálne riadenie robota.
 
-## Hlavné komponenty
+## Model robota (`robot_name`)
 
-### Teach Point Server
-Server pre ukladanie polohy robota do súboru. Pri spustení servera sa v adresári balíka vytvorí súbor `teach_points.txt`, kde sa ukladajú jednotlivé body.
+Model robota sa vyberá argumentom `robot_name` pri spustení launch súboru.
 
-### Teach Point Client
-Interaktívny klient pre komunikáciu s teach point serverom. Umožňuje zadať rýchlosť a uložiť aktuálnu polohu robota.
+Podporované hodnoty:
 
-### Play Trajectory Server
-Server pre prehrávanie uložených bodov z `teach_points.txt`. Načíta body zo súboru a pošle ich na riadenie robota.
+- `advancedArm` (predvolené)
+- `simpleArm` (zatiaľ placeholder, kým nedoplníš vlastný URDF)
 
-### Play Trajectory Client
-Interaktívny klient pre komunikáciu s play trajectory serverom.
+URDF súbory sú v `robot/rrm_simple_robot_model/urdf`:
 
-### Control Node
-Centrálny riadiaci uzol. Komunikuje so všetkými ostatnými servermi a koordinuje operácie (učenie, prehrávanie, vymazávanie bodov).
+- `advancedArm.urdf`
+- `simpleArm.urdf`
 
-### Teleop Node
-Uzol pre diaľkové ovládanie. Umožňuje manuálne riadenie robota v reálnom čase.
+## Stručný popis súborov v `src/`
 
-### Logger Node
-Zaznamenáva stav kĺbov robota.
+- `src/control_node.cpp`: Interaktívne menu, volá služby pre move, save, play a clear. (funguje to len pre simpleArm)
+- `src/logger_node.cpp`: Vypisuje/loguje stav kĺbov z topicu `joint_states`.
+- `src/play_trajectory_client_node.cpp`: Klient, ktorý volá službu `/play_trajectory`.
+- `src/play_trajectory_server_node.cpp`: Načíta `teach_points.txt` a postupne volá `move_command`.
+- `src/teach_point_client_node.cpp`: Klient, ktorý uloží aktuálnu polohu cez `/save_point`.
+- `src/teach_point_server_node.cpp`: Server pre `/save_point` a `/clear_points`, zapisuje do `teach_points.txt`.
+- `src/teleop_node.cpp`: Jednoduché manuálne ovládanie cez `move_command`.
 
-## Súbory
+## Rýchly štart (odporúčaný postup)
 
-- `teach_points.txt` - Ukladá body učenia. Vytvorí sa automaticky v adresári balíka. Formát: `ID poloha1 poloha2 poloha3 rýchlosť`
-- `launch/block1_system.launch.xml` - Spúšťa všetky uzly systému
+### 1. Build workspace
+
+```bash
+cd ~/ros2_ws
+source /opt/ros/jazzy/setup.bash
+colcon build
+```
+
+### 2. Spusti celý systém (Terminál A)
+
+```bash
+cd ~/ros2_ws
+source /opt/ros/jazzy/setup.bash
+source ~/ros2_ws/install/setup.bash
+ros2 launch block1_nebus block1_system.launch.xml robot_name:=advancedArm
+```
+
+Pre `simpleArm` použi:
+
+```bash
+ros2 launch block1_nebus block1_system.launch.xml robot_name:=simpleArm
+```
+
+### 3. Spusti ovládanie (Terminál B)
+
+```bash
+cd ~/ros2_ws
+source /opt/ros/jazzy/setup.bash
+source ~/ros2_ws/install/setup.bash
+ros2 run block1_nebus control_node
+```
+
+### 4. Voliteľná kontrola služieb (Terminál C)
+
+```bash
+cd ~/ros2_ws
+source /opt/ros/jazzy/setup.bash
+source ~/ros2_ws/install/setup.bash
+ros2 service list | grep -E "save_point|clear_points|play_trajectory|move_command"
+```
+
+Mal by si vidieť minimálne:
+
+- `/move_command`
+- `/save_point`
+- `/clear_points`
+- `/play_trajectory`
+
+## Samostatné spúšťanie nodov
+
+- `control_node` samostatne: Nie, potrebuje bežať servery (`teach_point_server_node`, `play_trajectory_server_node`) a simulátor (`rrm_sim`).
+- `teach_point_server_node` samostatne: Áno, ale potrebuje bežať zdroj `joint_states` (simulátor).
+- `play_trajectory_server_node` samostatne: Áno, ale potrebuje bežať službu `move_command` (simulátor) a súbor `teach_points.txt`.
+- `teach_point_client_node` samostatne: Áno, ale potrebuje `/save_point` server.
+- `play_trajectory_client_node` samostatne: Áno, ale potrebuje `/play_trajectory` server.
+- `teleop_node` samostatne: Áno, ale potrebuje `/move_command` server.
+- `logger_node` samostatne: Áno, ale potrebuje topic `joint_states`.
 
 ## Služby
 
-- `/save_point` - Uloží aktuálnu polohu s danou rýchlosťou
-- `/play_trajectory` - Prehráva uložené body
-- `/clear_points` - Vymaže všetky uložené body
+- `/move_command`: Pohyb robota (server je v `rrm_sim`).
+- `/save_point`: Uloženie aktuálnej polohy a rýchlosti.
+- `/clear_points`: Vymazanie `teach_points.txt`.
+- `/play_trajectory`: Prehratie uložených bodov.
 
-## Spustenie
+## Typické problémy
 
-Zapni všetky uzly:
-```bash
-ros2 launch block1_nebus block1_system.launch.xml
-```
-Potom v druhom termináli spusti controll node:
-```bash
-ros2 run block1_nebus controll_node
-```
+- `Service /save_point not available`: Beží len `control_node`, ale nebeží `teach_point_server_node`.
+- `incorrect size of desired positions`: Nesúlad počtu kĺbov medzi klientom a simulátorom; systém je upravený tak, aby podporoval aj 3-prvkový príkaz pre `advancedArm`.
+
+## Poznámka k `simpleArm`
+
+`simpleArm.urdf` je momentálne placeholder. Kým ho nedoplníš validným obsahom URDF, tento variant nemusí byť použiteľný na vizualizáciu ani simuláciu.

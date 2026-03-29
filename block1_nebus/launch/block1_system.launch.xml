@@ -1,5 +1,9 @@
 <launch>
-  <include file="$(find-pkg-share rrm_sim)/launch/rrm_sim.launch.xml" />
+  <arg name="robot_name" default="advancedArm" description="URDF file name without extension (simpleArm|advancedArm)"/>
+
+  <include file="$(find-pkg-share rrm_sim)/launch/rrm_sim.launch.xml">
+    <arg name="robot_name" value="$(var robot_name)"/>
+  </include>
 
   <node pkg="block1_nebus" exec="teach_point_server_node" name="teach_point_server_node" output="screen" />
   <node pkg="block1_nebus" exec="play_trajectory_server_node" name="play_trajectory_server_node" output="screen" />
