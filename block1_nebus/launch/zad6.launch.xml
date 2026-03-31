@@ -1,0 +1,13 @@
+<launch>
+
+    <!-- Spustenie simulácie (GUI) -->
+    <include file="$(find-pkg-share rrm_sim)/launch/rrm_sim_gui.launch.xml" />
+
+    <!-- Spustenie logger_node -->
+    <node
+        pkg="block1_nebus"
+        exec="logger_node"
+        name="logger_node"
+        output="screen" />
+
+</launch>
