@@ -9,11 +9,13 @@ Model robota sa vyberá argumentom `robot_name` pri spustení launch súboru.
 Podporované hodnoty:
 
 - `advancedArm` (predvolené)
+- `manipulator`
 - `simpleArm` (zatiaľ placeholder, kým nedoplníš vlastný URDF)
 
 URDF súbory sú v `robot/rrm_simple_robot_model/urdf`:
 
 - `advancedArm.urdf`
+- `manipulator.urdf`
 - `simpleArm.urdf`
 
 ## Stručný popis súborov v `src/`
@@ -43,6 +45,12 @@ cd ~/ros2_ws
 source /opt/ros/jazzy/setup.bash
 source ~/ros2_ws/install/setup.bash
 ros2 launch block1_nebus block1_system.launch.xml robot_name:=advancedArm
+```
+
+Pre `manipulator` použi:
+
+```bash
+ros2 launch block1_nebus block1_system.launch.xml robot_name:=manipulator
 ```
 
 Pre `simpleArm` použi:
@@ -101,3 +109,29 @@ Mal by si vidieť minimálne:
 ## Poznámka k `simpleArm`
 
 `simpleArm.urdf` je momentálne placeholder. Kým ho nedoplníš validným obsahom URDF, tento variant nemusí byť použiteľný na vizualizáciu ani simuláciu.
+
+
+## IkSolverNode:
+samostatna ROS 2 Node, ktorá sluzi pre výpočty inverznej kinematiky
+pomocou analytických funkcií. Algoritmus je schopny najst vsetky 4 riesenia (ak su validne).
+toto je splnene:
+Implementujte dynamické načítanie limitov kĺbov (napr. z parametra
+robot_description alebo URDF modelu). Riešenia, ktoré prekračujú fyzické limity
+robota, musia byť automaticky zahodené.
+-​ Node bude poskytovať služby (services) pre:
+-​ Výpočet všetkých platných riešení
+-​ Nájdenie „najlepšieho“ riešenia, ktoré je definované ako konfigurácia, ktorá
+vyžaduje najmenšiu celkovú zmenu natočenia kĺbov vzhľadom na aktuálny
+stav robot
+
+## MotionManagerNode:
+toto je splnene:
+-​ Vytvorte riadiacu Node, ktorá bude orchestrátorom pohybu a rozhraním pre
+používateľa.
+-​ Tento uzol bude poskytovať službu (service), ktorej vstupom je cieľová kartézska
+poloha.
+-​ Po zavolaní služby manažér získa aktuálny stav robota, požiada IK solver o najlepšie
+riešenie a následne pošle príkaz na pohyb do simulátora (volaním služby
+move_command z balíka rrm_sim).
+-​ Manažér vráti úspešný stav (Success) až v momente, keď simulátor potvrdí
+ukončenie pohybu.

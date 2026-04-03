@@ -1,5 +1,5 @@
 <launch>
-	<arg name="robot_name" default="advancedArm" description="URDF file name without extension (simpleArm|advancedArm)"/>
+	<arg name="robot_name" default="simpleArm" description="URDF file name without extension (simpleArm|advancedArm|manipulator)"/>
 
 	<node pkg="joint_state_publisher_gui" exec="joint_state_publisher_gui" name="joint_state_publisher_gui" output="screen"/>
 	<include file="$(find-pkg-share rrm_simple_robot_model)/launch/robot_state_publisher.launch.xml">

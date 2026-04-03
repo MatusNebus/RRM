@@ -1,5 +1,5 @@
 <launch>
-  <arg name="robot_name" default="advancedArm" description="URDF file name without extension (simpleArm|advancedArm)"/>
+  <arg name="robot_name" default="simpleArm" description="URDF file name without extension (simpleArm|advancedArm|manipulator)"/>
 
   <include file="$(find-pkg-share rrm_sim)/launch/rrm_sim.launch.xml">
     <arg name="robot_name" value="$(var robot_name)"/>

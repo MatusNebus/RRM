@@ -30,8 +30,8 @@ def _build_nodes(context):
 def generate_launch_description():
     robot_name_arg = DeclareLaunchArgument(
         'robot_name',
-        default_value='advancedArm',
-        description='URDF file name without extension (simpleArm|advancedArm)',
+        default_value='simpleArm',
+        description='URDF file name without extension (simpleArm|advancedArm|manipulator)',
     )
 
     return launch.LaunchDescription([

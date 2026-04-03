@@ -72,6 +72,13 @@ class RobotSimNode : public rclcpp::Node
             return 3;
         }
 
+        if (robot_name == "advancedArm" || robot_name == "manipulator") {
+            return 6;
+        }
+
+        RCLCPP_WARN(this->get_logger(),
+                    "Unknown robot_name '%s', defaulting to 6 active joints",
+                    robot_name.c_str());
         return 6;
     }
 
